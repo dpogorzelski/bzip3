@@ -3,7 +3,10 @@ load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
 genrule(
     name = "version_header",
     outs = ["version.h"],
-    cmd_bash = "sed -n 's/STABLE_BUILD_GIT_DESCRIBE /#define VERSION \"/p' bazel-out/stable-status.txt | sed 's/$$/\"/' > $@",
+    cmd = select({
+        "@platforms//os:windows": "powershell -Command \"(Get-Content bazel-out/stable-status.txt | Select-String 'STABLE_BUILD_GIT_DESCRIBE' | ForEach-Object { $_.Line -replace 'STABLE_BUILD_GIT_DESCRIBE ', '#define VERSION \\\"' }) + '\\\"' | Out-File -Encoding ASCII $@\"",
+        "//conditions:default": "grep '^STABLE_BUILD_GIT_DESCRIBE ' bazel-out/stable-status.txt | sed 's/STABLE_BUILD_GIT_DESCRIBE /#define VERSION \"/g' | sed 's/$$/\"/' > $@",
+    }),
     stamp = True,
 )
 
@@ -60,7 +63,6 @@ C_OPTIONS = select({
         "--pedantic-errors",
         "-Wall",
         "-Wconversion",
-        # "-Werror",
         "-Wextra",
         "-Wlong-long",
         "-Wmissing-declarations",

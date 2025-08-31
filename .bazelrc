@@ -1,1 +1,12 @@
+# Default workspace status command for Unix-like systems
 build --workspace_status_command "build-aux/workspace_status.sh"
+
+# Windows-specific configurations
+build:windows --workspace_status_command "powershell.exe -ExecutionPolicy Bypass -File build-aux/workspace_status.ps1"
+build:windows --platforms=@platforms//os:windows
+build:windows-batch --workspace_status_command "build-aux/workspace_status.bat"
+build:windows-batch --platforms=@platforms//os:windows
+
+# Platform-specific configurations that users can invoke
+build:linux --workspace_status_command "build-aux/workspace_status.sh"
+build:macos --workspace_status_command "build-aux/workspace_status.sh"
