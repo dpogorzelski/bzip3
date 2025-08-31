@@ -35,6 +35,7 @@
 #include "common.h"
 #include "libbz3.h"
 #include "yarg.h"
+#include "version.h"
 
 #define MODE_DECODE 0
 #define MODE_ENCODE 1

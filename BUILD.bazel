@@ -1,5 +1,12 @@
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
 
+genrule(
+    name = "version_header",
+    outs = ["version.h"],
+    cmd_bash = "sed -n 's/STABLE_BUILD_GIT_DESCRIBE /#define VERSION \"/p' bazel-out/stable-status.txt | sed 's/$$/\"/' > $@",
+    stamp = True,
+)
+
 config_setting(
     name = "build_shared_libs",
     values = {"define": "build_shared_libs=1"},
@@ -23,7 +30,7 @@ config_setting(
 cc_library(
     name = "bz3",
     srcs = ["src/libbz3.c"],
-    hdrs = glob(["include/*.h"]),
+    hdrs = glob(["include/*.h"]) + [":version_header"],
     copts = [
         "-std=c99",
     ] + select({
@@ -33,9 +40,7 @@ cc_library(
         ],
         "//conditions:default": [],
     }),
-    defines = [
-        'VERSION="\\"1.5.3\\""',
-    ] + select({
+    defines = select({
         ":enable_pthread": ["PTHREAD"],
         "//conditions:default": [],
     }),

@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "libsais.h"
+#include "version.h"
 
 #if defined(__GNUC__) || defined(__clang__)
     #define LIKELY(x)   __builtin_expect(!!(x), 1)
