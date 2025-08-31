@@ -8,6 +8,22 @@ genrule(
 )
 
 config_setting(
+    name = "clang-cl",
+    flag_values = {
+        "@bazel_tools//tools/cpp:compiler": "clang-cl",
+    },
+    visibility = ["//visibility:public"],
+)
+
+config_setting(
+    name = "msvc",
+    flag_values = {
+        "@bazel_tools//tools/cpp:compiler": "msvc-cl",
+    },
+    visibility = ["//visibility:public"],
+)
+
+config_setting(
     name = "build_shared_libs",
     values = {"define": "build_shared_libs=1"},
 )
@@ -27,13 +43,39 @@ config_setting(
     values = {"define": "enable_static_exe=1"},
 )
 
+C_OPTIONS = select({
+    ":msvc": [],
+    ":clang-cl": [
+        "/W4",
+        "-Wconversion",
+        "-Wlong-long",
+        "-Wmissing-declarations",
+        "-Wmissing-prototypes",
+        "-Wno-strict-aliasing",
+        "-Wshadow",
+        "-Wsign-compare",
+        "-Wno-sign-conversion",
+    ],
+    "//conditions:default": [
+        "--pedantic-errors",
+        "-Wall",
+        "-Wconversion",
+        # "-Werror",
+        "-Wextra",
+        "-Wlong-long",
+        "-Wmissing-declarations",
+        "-Wmissing-prototypes",
+        "-Wno-strict-aliasing",
+        "-Wshadow",
+        "-Wsign-compare",
+    ],
+})
+
 cc_library(
     name = "bz3",
     srcs = ["src/libbz3.c"],
     hdrs = glob(["include/*.h"]) + [":version_header"],
-    copts = [
-        "-std=c99",
-    ] + select({
+    copts = C_OPTIONS + select({
         ":enable_arch_native": [
             "-march=native",
             "-mtune=native",
@@ -54,6 +96,13 @@ cc_library(
 cc_binary(
     name = "bzip3",
     srcs = ["src/main.c"],
+    copts = C_OPTIONS + select({
+        ":enable_arch_native": [
+            "-march=native",
+            "-mtune=native",
+        ],
+        "//conditions:default": [],
+    }),
     linkstatic = select({
         ":enable_static_exe": True,
         "//conditions:default": False,
