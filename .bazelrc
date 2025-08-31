@@ -1,1 +1,1 @@
-build --workspace_status_command "tools/workspace_status.sh"
+build --workspace_status_command "build-aux/workspace_status.sh"
