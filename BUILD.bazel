@@ -4,7 +4,7 @@ genrule(
     name = "version_header",
     outs = ["version.h"],
     cmd = "grep '^STABLE_BUILD_GIT_DESCRIBE ' bazel-out/stable-status.txt | sed 's/STABLE_BUILD_GIT_DESCRIBE /#define VERSION \"/g' | sed 's/$$/\"/' > $@",
-    cmd_ps = "powershell -Command \"(Get-Content bazel-out/stable-status.txt | Select-String 'STABLE_BUILD_GIT_DESCRIBE' | ForEach-Object { $$_ .Line -replace 'STABLE_BUILD_GIT_DESCRIBE ', '#define VERSION \\\"' }) + '\\\"' | Out-File -Encoding ASCII $@\"",
+    cmd_ps = "(Get-Content bazel-out/stable-status.txt | Select-String 'STABLE_BUILD_GIT_DESCRIBE' | ForEach-Object { $$_ .Line -replace 'STABLE_BUILD_GIT_DESCRIBE ', '#define VERSION \\\"' }) + '\\\"' | Out-File -Encoding ASCII $@",
     stamp = True,
 )
 
