@@ -17,6 +17,7 @@ bazel build :all --define=enable_arch_native=1 --define=enable_static_exe=1 --de
 ```
 
 **Windows (PowerShell):**
+The bazel setup works on Windows but the code doesn't build due to lack of platform specific code tweaks
 
 ```console
 bazel build :all --config=windows
