@@ -41,6 +41,7 @@ autom4te.cache/
 !/build-aux/ax_transformed_package_name.m4
 !/build-aux/git-version-gen
 !/build-aux/workspace_status.sh
+!/build-aux/workspace_status.ps1
 bzip3.pc
 
 examples/hl-api

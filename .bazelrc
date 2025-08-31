@@ -1,1 +1,5 @@
 build --workspace_status_command "build-aux/workspace_status.sh"
+
+build:windows --workspace_status_command "powershell.exe -ExecutionPolicy Bypass -File build-aux/workspace_status.ps1"
+build:linux --workspace_status_command "build-aux/workspace_status.sh"
+build:macos --workspace_status_command "build-aux/workspace_status.sh"
