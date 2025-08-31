@@ -61,3 +61,6 @@ bz3more.1
 bz3most.1
 
 bzip3.1
+
+bazel-*
+build

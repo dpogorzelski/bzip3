@@ -1,0 +1,57 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
+
+config_setting(
+    name = "build_shared_libs",
+    values = {"define": "build_shared_libs=1"},
+)
+
+config_setting(
+    name = "enable_pthread",
+    values = {"define": "enable_pthread=1"},
+)
+
+config_setting(
+    name = "enable_arch_native",
+    values = {"define": "enable_arch_native=1"},
+)
+
+config_setting(
+    name = "enable_static_exe",
+    values = {"define": "enable_static_exe=1"},
+)
+
+cc_library(
+    name = "bz3",
+    srcs = ["src/libbz3.c"],
+    hdrs = glob(["include/*.h"]),
+    copts = [
+        "-std=c99",
+    ] + select({
+        ":enable_arch_native": [
+            "-march=native",
+            "-mtune=native",
+        ],
+        "//conditions:default": [],
+    }),
+    defines = [
+        'VERSION="\\"1.5.3\\""',
+    ] + select({
+        ":enable_pthread": ["PTHREAD"],
+        "//conditions:default": [],
+    }),
+    includes = ["include"],
+    linkstatic = select({
+        ":build_shared_libs": False,
+        "//conditions:default": True,
+    }),
+)
+
+cc_binary(
+    name = "bzip3",
+    srcs = ["src/main.c"],
+    linkstatic = select({
+        ":enable_static_exe": True,
+        "//conditions:default": False,
+    }),
+    deps = [":bz3"],
+)
